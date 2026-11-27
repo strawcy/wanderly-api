@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wanderly</title>
+<link rel="icon" href="wanderly-icon-nature.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#2F6B4F; --forest-d:#245640; --leaf:#4FA36F; --mint:#9AD1AA; --sky:#CDEBEF;
+  --sun:#FFC94A; --cream:#FFF3D6; --paper:#FFFBF2; --ink:#1F3D2E;
+  --line:#D9E6D6; --err:#B3261E; --muted:#5E7A69;
+  --font:'Nunito','Varela Round','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:var(--font);color:var(--ink);background:var(--paper);line-height:1.5}
+[hidden]{display:none!important}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--forest);outline-offset:2px}
+
+/* Login: floating card over a nature scene */
+.login{min-height:100%;position:relative;overflow:hidden;display:grid;place-items:center;padding:24px}
+.scene{position:absolute;inset:0;width:100%;height:100%}
+.cloud>g{animation:drift 70s linear infinite}
+.cloud.slow>g{animation-duration:110s;animation-delay:-40s}
+.cloud.mid>g{animation-duration:90s;animation-delay:-20s}
+@keyframes drift{from{transform:translateX(-300px)}to{transform:translateX(1500px)}}
+.bird{animation:drift 55s linear infinite}
+.sway{transform-box:fill-box;transform-origin:50% 100%;animation:sway 5s ease-in-out infinite}
+.sway.b{animation-delay:-2s}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+.trail{stroke-dasharray:1 12;animation:walk 3s ease-out 1 both}
+@keyframes walk{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+
+.card{position:relative;z-index:2;width:100%;max-width:410px;padding:30px 30px 28px;border-radius:30px;
+  background:rgba(255,251,242,.84);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  box-shadow:0 20px 50px rgba(36,86,64,.22),0 0 0 1.5px rgba(255,255,255,.7) inset;
+  animation:bob 7s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.badge{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+.badge img{width:76px;height:76px;filter:drop-shadow(0 6px 8px rgba(47,107,79,.25))}
+.badge span{font-weight:800;font-size:1.5rem;color:var(--forest);margin-top:4px}
+.tabs{display:flex;gap:4px;background:rgba(47,107,79,.1);padding:4px;border-radius:16px;margin-bottom:22px}
+.tab{flex:1;border:0;background:transparent;padding:10px;border-radius:12px;color:var(--muted);font-weight:700;cursor:pointer}
+.tab[aria-selected="true"]{background:#fff;color:var(--forest);box-shadow:0 1px 3px rgba(47,107,79,.2)}
+h2{font-weight:800;font-size:1.5rem;margin:0 0 2px;text-align:center}
+.sub{color:var(--muted);margin:0 0 20px;text-align:center}
+label{display:block;font-weight:700;font-size:.9rem;margin-bottom:6px}
+.field{margin-bottom:16px}
+.input-wrap{position:relative}
+input{width:100%;padding:12px 16px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+input:focus{border-color:var(--leaf);outline:none;box-shadow:0 0 0 4px rgba(79,163,111,.2)}
+input[aria-invalid="true"]{border-color:var(--err)}
+.toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--forest);font-weight:700;font-size:.85rem;cursor:pointer;padding:6px}
+.hint{font-size:.82rem;color:var(--muted);margin-top:5px}
+.btn{width:100%;border:0;background:var(--forest);color:#fff;font-weight:800;padding:13px;border-radius:14px;cursor:pointer;transition:background .15s,transform .15s}
+.btn:hover{background:var(--forest-d);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait}
+.alert{background:#FDECEA;color:var(--err);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:.92rem;font-weight:600}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:var(--muted);font-size:.85rem;font-weight:600}
+.divider::before,.divider::after{content:"";flex:1;height:1.5px;background:var(--line)}
+#googleBtn{display:flex;justify-content:center;min-height:44px}
+.card-foot{display:flex;justify-content:center;margin-top:22px}
+.card-foot img{height:36px;width:auto}
+
+/* Dashboard shell */
+.app{min-height:100%;display:grid;grid-template-rows:auto 1fr}
+.top{background:var(--forest);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 28px}
+.top .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.4rem;color:var(--cream)}
+.top .brand img{width:38px;height:38px}
+.top .who{display:flex;gap:16px;align-items:center;font-size:.92rem;color:var(--cream)}
+.ghost{background:transparent;border:2px solid var(--mint);color:#fff;padding:7px 14px;border-radius:12px;cursor:pointer;font-weight:700}
+.ghost:hover{background:rgba(255,255,255,.12)}
+main{padding:40px 28px;max-width:960px;width:100%;margin:0 auto}
+main h2{font-size:2rem;text-align:left}
+.empty{margin-top:28px;border:2px dashed var(--mint);border-radius:20px;padding:44px 24px;text-align:center;background:#fff}
+.empty img{width:84px;height:84px;margin-bottom:8px}
+.empty p{color:var(--muted);margin:0 0 18px;font-weight:600}
+.empty .btn{width:auto;padding:12px 24px}
+
+@media (prefers-reduced-motion:reduce){
+  .cloud>g,.bird,.sway,.trail,.card{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="loginView">
+  <svg class="scene" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#BDE4F0"/><stop offset=".75" stop-color="#F3F8E6"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#sky)"/>
+    <circle cx="980" cy="150" r="96" fill="#FFC94A" opacity=".22"/>
+    <circle cx="980" cy="150" r="62" fill="#FFC94A"/>
+
+    <g class="cloud"><g><g transform="translate(0 120)" fill="#fff" opacity=".92"><ellipse cx="40" cy="14" rx="70" ry="20"/><circle cx="10" cy="0" r="24"/><circle cx="48" cy="-10" r="32"/><circle cx="84" cy="2" r="22"/></g></g></g>
+    <g class="cloud mid"><g><g transform="translate(0 220)" fill="#fff" opacity=".8"><ellipse cx="30" cy="12" rx="52" ry="15"/><circle cx="12" cy="2" r="18"/><circle cx="42" cy="-6" r="24"/></g></g></g>
+    <g class="cloud slow"><g><g transform="translate(0 60)" fill="#fff" opacity=".7"><ellipse cx="30" cy="12" rx="48" ry="14"/><circle cx="14" cy="2" r="16"/><circle cx="42" cy="-4" r="22"/></g></g></g>
+    <g class="bird"><path transform="translate(0 180)" d="M0 0 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#2F6B4F" stroke-width="2.4" stroke-linecap="round"/></g>
+    <g class="bird" style="animation-duration:70s;animation-delay:-25s"><path transform="translate(0 150) scale(.8)" d="M0 0 q8 -9 16 0 q8 -9 16 0" fill="none" stroke="#2F6B4F" stroke-width="2.4" stroke-linecap="round"/></g>
+
+    <path d="M0 520 Q120 360 230 380 Q330 400 400 450 Q520 280 640 360 Q760 440 820 480 Q960 380 1060 420 Q1150 450 1200 500 V800 H0Z" fill="#B9DFC9"/>
+    <path d="M0 600 Q250 500 520 580 T1200 560 V800 H0Z" fill="#9AD1AA"/>
+
+    <!-- trees on the mid hill -->
+    <g class="sway"><rect x="1036" y="622" width="9" height="38" rx="3" fill="#7A5233"/><circle cx="1040" cy="610" r="32" fill="#4FA36F"/><circle cx="1054" cy="624" r="20" fill="#5BB17B"/></g>
+    <g class="sway b"><rect x="1112" y="640" width="7" height="30" rx="3" fill="#7A5233"/><circle cx="1115" cy="630" r="24" fill="#4FA36F"/></g>
+    <g class="sway b"><rect x="136" y="640" width="8" height="36" rx="3" fill="#7A5233"/><circle cx="140" cy="626" r="30" fill="#4FA36F"/><circle cx="126" cy="640" r="18" fill="#5BB17B"/></g>
+
+    <path d="M0 680 Q300 590 620 660 T1200 640 V800 H0Z" fill="#6DBB87"/>
+    <path d="M0 740 Q350 670 700 730 T1200 710 V800 H0Z" fill="#2F6B4F"/>
+    <path class="trail" d="M430 800 C370 772 300 762 233 716" fill="none" stroke="#FFF3D6" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- flowers -->
+    <g><circle cx="330" cy="748" r="6" fill="#FF9DA7"/><circle cx="330" cy="748" r="2.2" fill="#FFF3D6"/>
+       <circle cx="372" cy="760" r="5" fill="#FFC94A"/><circle cx="372" cy="760" r="2" fill="#FFF3D6"/>
+       <circle cx="860" cy="740" r="6" fill="#FF9DA7"/><circle cx="860" cy="740" r="2.2" fill="#FFF3D6"/>
+       <circle cx="910" cy="748" r="5" fill="#FFC94A"/><circle cx="910" cy="748" r="2" fill="#FFF3D6"/>
+       <circle cx="1010" cy="738" r="6" fill="#FF9DA7"/><circle cx="1010" cy="738" r="2.2" fill="#FFF3D6"/></g>
+
+    <!-- the little leaf -->
+    <g class="sway" transform="translate(153 594) scale(2.4)">
+      <path d="M32 44 L32 49" stroke="#7A5233" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M32 7 C46 11 48 28 32 43 C16 28 18 11 32 7Z" fill="#4FA36F"/>
+      <path d="M32 12 C34 20 33 30 32 38" fill="none" stroke="#3B8458" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+      <circle cx="27.5" cy="25" r="1.9" fill="#1F3D2E"/><circle cx="36.5" cy="25" r="1.9" fill="#1F3D2E"/>
+      <circle cx="24.8" cy="29" r="2" fill="#FF9DA7" opacity=".8"/><circle cx="39.2" cy="29" r="2" fill="#FF9DA7" opacity=".8"/>
+      <path d="M29.2 29 Q32 32.2 34.8 29" fill="none" stroke="#1F3D2E" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+  </svg>
+
+  <div class="card">
+    <div class="badge"><img src="wanderly-icon-nature.svg" alt=""><span>wanderly</span></div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabLogin" aria-selected="true">Sign in</button>
+      <button class="tab" role="tab" id="tabRegister" aria-selected="false">Create account</button>
+    </div>
+    <h2 id="title">Welcome back</h2>
+    <p class="sub" id="sub">Sign in to see your trips.</p>
+
+    <div class="alert" id="error" role="alert" hidden></div>
+
+        <form id="form" novalidate>
+      <div id="nameField" hidden>
+        <div class="field">
+          <label for="firstName">First name</label>
+          <input id="firstName" autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label for="lastName">Last name</label>
+          <input id="lastName" autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <input id="password" type="password" autocomplete="current-password" required minlength="8">
+          <button type="button" class="toggle" id="toggle" aria-label="Show password">Show</button>
+        </div>
+        <div class="hint" id="pwHint" hidden>Use at least 8 characters.</div>
+      </div>
+      <button class="btn" id="submit" type="submit">Sign in</button>
+    </form>
+
+    <div id="googleBlock">
+      <div class="divider">or</div>
+      <div id="googleBtn"></div>
+    </div>
+
+    <div class="card-foot"><img src="wanderly-logo-nature.svg" alt="Wanderly"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="app" id="appView" hidden>
+  <header class="top">
+    <div class="brand"><img src="wanderly-icon-nature.svg" alt="">wanderly</div>
+    <div class="who"><span id="userLabel"></span><button class="ghost" id="logout">Sign out</button></div>
+  </header>
+  <main>
+    <h2>Your trips</h2>
+    <div class="empty">
+      <img src="wanderly-icon-nature.svg" alt="">
+      <p>You haven’t planned a trip yet.</p>
+      <button class="btn" type="button">Plan a trip</button>
+    </div>
+  </main>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+/* ---- Config: change to your Nest API address/routes ---- */
+const API_URL = 'http://localhost:3001/api/v1';
+const ROUTES = { login: '/auth/login', register: '/tourists', google: '/auth/google' };
+const GOOGLE_CLIENT_ID = ''; // paste your Google OAuth Client ID here
+const TOKEN_KEY = 'wanderly_token';
+
+const $ = id => document.getElementById(id);
+let mode = 'login';
+
+function setMode(m){
+  mode = m;
+  const reg = m === 'register';
+  $('tabLogin').setAttribute('aria-selected', String(!reg));
+  $('tabRegister').setAttribute('aria-selected', String(reg));
+  $('title').textContent = reg ? 'Create your account' : 'Welcome back';
+  $('sub').textContent = reg ? 'It takes less than a minute.' : 'Sign in to see your trips.';
+  $('submit').textContent = reg ? 'Create account' : 'Sign in';
+  $('nameField').hidden = !reg;
+  $('pwHint').hidden = !reg;
+  $('password').autocomplete = reg ? 'new-password' : 'current-password';
+  showError('');
+}
+function showError(msg){ $('error').textContent = msg; $('error').hidden = !msg; }
+
+function showApp(email){
+  $('loginView').hidden = true; $('appView').hidden = false;
+  $('userLabel').textContent = email || '';
+}
+function showLogin(){
+  $('appView').hidden = true; $('loginView').hidden = false;
+  $('password').value = '';
+}
+
+function parseJwt(t){
+  try { return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
+  catch { return {}; }
+}
+
+$('tabLogin').onclick = () => setMode('login');
+$('tabRegister').onclick = () => setMode('register');
+$('toggle').onclick = () => {
+  const show = $('password').type === 'password';
+  $('password').type = show ? 'text' : 'password';
+  $('toggle').textContent = show ? 'Hide' : 'Show';
+  $('toggle').setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+};
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  showError('');
+  const email = $('email').value.trim(), password = $('password').value, name = $('name').value.trim();
+  ['email','password'].forEach(i => $(i).removeAttribute('aria-invalid'));
+
+  if (!/^\S+@\S+\.\S+$/.test(email)) { $('email').setAttribute('aria-invalid','true'); return showError('Enter a valid email address.'); }
+  if (password.length < 8) { $('password').setAttribute('aria-invalid','true'); return showError('Password must be at least 8 characters.'); }
+  if (mode === 'register' && !name) return showError('Enter your full name.');
+
+  const body = mode === 'register' ? { name, email, password } : { email, password };
+  $('submit').disabled = true;
+  try {
+    const res = await fetch(API_URL + ROUTES[mode], {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const m = Array.isArray(data.message) ? data.message.join(' ') : data.message;
+      throw new Error(res.status === 401 ? 'Email or password is incorrect.' : (m || 'Something went wrong. Try again.'));
+    }
+    const token = data.access_token || data.accessToken || data.token;
+    if (!token) { setMode('login'); return showError('Account created. Sign in to continue.'); }
+    localStorage.setItem(TOKEN_KEY, token);
+    showApp(parseJwt(token).email || email);
+  } catch (err) {
+    showError(err instanceof TypeError ? 'Can’t reach the server. Check that the API is running.' : err.message);
+  } finally {
+    $('submit').disabled = false;
+  }
+});
+
+$('logout').onclick = () => { localStorage.removeItem(TOKEN_KEY); showLogin(); };
+
+/* ---- Google sign-in ---- */
+function initGoogle(){
+  if (!GOOGLE_CLIENT_ID || !window.google) { $('googleBlock').hidden = true; return; }
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogle });
+  google.accounts.id.renderButton($('googleBtn'), { theme: 'outline', size: 'large', shape: 'pill', text: 'continue_with', width: 330 });
+}
+async function onGoogle(resp){
+  showError('');
+  try {
+    const res = await fetch(API_URL + ROUTES.google, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential: resp.credential })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || 'Google sign-in failed. Try again.');
+    const token = data.access_token || data.accessToken || data.token;
+    if (!token) throw new Error('Google sign-in failed. Try again.');
+    localStorage.setItem(TOKEN_KEY, token);
+    showApp(parseJwt(token).email);
+  } catch (err) {
+    showError(err instanceof TypeError ? 'Can’t reach the server. Check that the API is running.' : err.message);
+  }
+}
+window.addEventListener('load', initGoogle);
+
+/* Restore session */
+const saved = localStorage.getItem(TOKEN_KEY);
+if (saved) {
+  const p = parseJwt(saved);
+  if (!p.exp || p.exp * 1000 > Date.now()) showApp(p.email); else localStorage.removeItem(TOKEN_KEY);
+}
+</script>
+</body>
+</html>
