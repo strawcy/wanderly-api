@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { isDuplicateError, isReferencedError } from '../common/utils/db-errors';
 
 @Injectable()
@@ -22,6 +23,17 @@ export class CategoriesService {
   async create(dto: CreateCategoryDto) {
     try {
       return await this.repo.save(this.repo.create(dto));
+    } catch (e) {
+      if (isDuplicateError(e)) throw new ConflictException('Category name already exists');
+      throw e;
+    }
+  }
+
+  async update(id: number, dto: UpdateCategoryDto) {
+    const category = await this.findOne(id);
+    Object.assign(category, dto);
+    try {
+      return await this.repo.save(category);
     } catch (e) {
       if (isDuplicateError(e)) throw new ConflictException('Category name already exists');
       throw e;
